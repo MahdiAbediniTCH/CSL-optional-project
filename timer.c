@@ -5,10 +5,24 @@
 #include <time.h>
 #endif
 
+#define IND(i, j) ((i)*n + (j))
+
+
 
 void matrix_mul(int*, int*, int*, int);
 
-void time_once(int* m1, int* m2, int* m3, int n) {
+int* generate_matrix(int n) {
+    int* m = malloc(sizeof(int) * n * n);
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            m[IND(i, (j + i) % n)] = j + 1;
+        }
+    }
+    return m;
+}
+double time_once(int* m1, int* m2, int* m3, int n) {
     #if defined(_WIN32) || defined(_WIN64)
     // Windows-specific timing code
     LARGE_INTEGER start, end, frequency;
@@ -23,6 +37,7 @@ void time_once(int* m1, int* m2, int* m3, int n) {
     time_taken = (double)(end.QuadPart - start.QuadPart) / frequency.QuadPart;
 
     printf("Time taken (Windows): %.9lf seconds\n", time_taken);
+    return time_taken;
     #else
     // Linux-specific timing code
     struct timespec start, end;
@@ -39,25 +54,29 @@ void time_once(int* m1, int* m2, int* m3, int n) {
 
     printf("Function execution time: %ld ns\n", nanoseconds);
     printf("Function execution time: %.9f s\n", elapsed);
+    return elapsed;
     #endif
     return 0;
 }
 int main() {
-    int n = 3;
-    int m1[3][3] = {{1,1,1},{1,1,1},{1,1,1}};
-    int m2[3][3] = {{1,2,3},{1,2,3},{1,2,3}};
-    int m3[3][3];
-    
-    time_once(m1, m2, m3, n);
+    double results[2048];
+    const int N_SAMPLES = 5;
+    // loop for each size
+    for (int n = 4; n <= 2048; n += 4) {
+        // average of 5 for accuracy
+        results[n] = 0;
 
-    for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0; j < 3; j++)
-        {
-            printf("%d ", m3[i][j]);
+        int* m1 = generate_matrix(n);
+        int* m2 = generate_matrix(n);
+        int* m3 = malloc(n * n * sizeof(int));
+
+        for (int j = 0; j < N_SAMPLES; j++) {
+            results[n] += time_once(m1, m2, m3, n);
         }
-        puts("");
+        results[n] /= N_SAMPLES;
+        free(m1); free(m2); free(m3);
     }
+    
 }
     
 // void time_general() {
