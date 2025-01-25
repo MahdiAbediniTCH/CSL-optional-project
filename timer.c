@@ -36,7 +36,7 @@ double time_once(int* m1, int* m2, int* m3, int n) {
     QueryPerformanceCounter(&end);
     time_taken = (double)(end.QuadPart - start.QuadPart) / frequency.QuadPart;
 
-    printf("Time taken (Windows): %.9lf seconds\n", time_taken);
+    // printf("Time taken (Windows): %.9lf seconds\n", time_taken);
     return time_taken;
     #else
     // Linux-specific timing code
@@ -52,8 +52,8 @@ double time_once(int* m1, int* m2, int* m3, int n) {
     long nanoseconds = end.tv_nsec - start.tv_nsec;
     double elapsed = seconds + nanoseconds*1e-9;
 
-    printf("Function execution time: %ld ns\n", nanoseconds);
-    printf("Function execution time: %.9f s\n", elapsed);
+    // printf("Function execution time: %ld ns\n", nanoseconds);
+    // printf("Function execution time: %.9f s\n", elapsed);
     return elapsed;
     #endif
     return 0;
@@ -71,7 +71,9 @@ int main() {
         int* m3 = malloc(n * n * sizeof(int));
 
         for (int j = 0; j < N_SAMPLES; j++) {
-            results[n] += time_once(m1, m2, m3, n);
+            double t = time_once(m1, m2, m3, n);
+            results[n] += t;
+            printf("%d: %.9lf\n", n, t);
         }
         results[n] /= N_SAMPLES;
         free(m1); free(m2); free(m3);
