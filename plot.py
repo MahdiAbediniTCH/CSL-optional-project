@@ -16,12 +16,13 @@ def read_results(file_name):
 
 
 input_sizes = list(range(4, MAX_N + 1, 4))
-runtimes_program1 = read_results("results_gcc_O0.bin")
-runtimes_program2 = read_results("results_gcc_O3.bin")
-runtimes_program3 = read_results("results_matrix_mul_function.s.bin")
+rt_gcc_o0 = read_results("results_gcc_O0.bin")
+rt_gcc_o3 = read_results("results_gcc_O3.bin")
+rt_asm = read_results("results_matrix_mul_function.s.bin")
+# rt_asm_simd = read_results("results_matrix_mul_function.s.bin")
 
 # Check that the lists are all the same length
-assert len(input_sizes) == len(runtimes_program1) == len(runtimes_program2) == len(runtimes_program3)
+assert len(input_sizes) == len(rt_gcc_o0) == len(rt_gcc_o3) == len(rt_asm)
 
 # Set the plot style
 plt.style.use('seaborn-v0_8-whitegrid')
@@ -30,21 +31,23 @@ plt.style.use('seaborn-v0_8-whitegrid')
 fig, ax = plt.subplots()
 
 # Define modern color palette
-colors = ['#4C72B0', '#55A868', '#C44E52']
+colors = ['#002cb1', '#1884bb', '#2c44df', '#029c6e']
 
 # Plot the runtimes with distinct styles (without markers)
-ax.plot(input_sizes, runtimes_program1, color=colors[0], label='GCC -O0')
-ax.plot(input_sizes, runtimes_program2, color=colors[1], label='GCC -O3')
-ax.plot(input_sizes, runtimes_program3, color=colors[2], label='Linear assembly')
+ax.plot(input_sizes, rt_gcc_o0, color=colors[0], label='GCC -O0')
+ax.plot(input_sizes, rt_gcc_o3, color=colors[1], label='GCC -O3')
+ax.plot(input_sizes, rt_asm, color=colors[2], label='Linear assembly')
+# ax.plot(input_sizes, rt_asm_simd, color=colors[3], label='SIMD assembly')
 
 # Add shadow effect
-ax.fill_between(input_sizes, runtimes_program1, alpha=0.1, color=colors[0])
-ax.fill_between(input_sizes, runtimes_program2, alpha=0.1, color=colors[1])
-ax.fill_between(input_sizes, runtimes_program3, alpha=0.1, color=colors[2])
+# ax.fill_between(input_sizes, rt_gcc_o0, alpha=0.5, color=colors[0])
+# ax.fill_between(input_sizes, rt_gcc_o3, alpha=0.5, color=colors[1])
+# ax.fill_between(input_sizes, rt_asm, alpha=0.5, color=colors[2])
+# ax.fill_between(input_sizes, rt_asm_simd, alpha=0.3, color=colors[3])
 
 # Add titles and labels
-ax.set_title('Runtime of Programs', fontsize=15)
-ax.set_xlabel('Input Size', fontsize=12)
+ax.set_title('Runtime of functions (Average of 5 runs)', fontsize=15)
+ax.set_xlabel('Matrix dimension (n)', fontsize=12)
 ax.set_ylabel('Runtime', fontsize=12)
 
 # Add a legend
