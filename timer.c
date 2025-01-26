@@ -22,6 +22,17 @@ int* generate_matrix(int n) {
     }
     return m;
 }
+void print_matrix(int* m, int n) {
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 0; j < n; j++)
+        {
+            printf("%d ", m[IND(i, j)]);
+        }
+        puts("");
+    }
+    return;
+}
 double time_once(int* m1, int* m2, int* m3, int n) {
     #if defined(_WIN32) || defined(_WIN64)
     // Windows-specific timing code
@@ -73,11 +84,14 @@ int main() {
         for (int j = 0; j < N_SAMPLES; j++) {
             double t = time_once(m1, m2, m3, n);
             results[n] += t;
-            printf("%d: %.9lf\n", n, t);
         }
         results[n] /= N_SAMPLES;
+        printf("%d: %.9lf\n", n, results[n]);
+        if (n < 20)
+            print_matrix(m3, n);
         free(m1); free(m2); free(m3);
     }
+    
     
 }
     
