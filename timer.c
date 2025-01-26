@@ -98,7 +98,8 @@ int main(int argc, char* argv[]) {
         }
         results[ind] /= N_SAMPLES;
         printf("%d: %.9lf\n", n, results[ind]);
-        // debug:        // if (n < 20)
+        // debug:        
+        // if (n < 20)
         //     print_matrix(m3, n);
         free(m1); free(m2); free(m3);
     }
