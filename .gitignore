@@ -4,3 +4,4 @@
 *.exe
 *.out
 .gdb*
+ser1_512/
