@@ -20,7 +20,7 @@ def read_results(file_name):
 input_sizes = list(range(4, MAX_N + 1 - 4 * TRIM, 4)) # trim the last entry
 rt_gcc_o0 = read_results("data_1024/results_gcc_O0.bin")[:LAST_IND]
 rt_gcc_o3 = read_results("data_1024/results_gcc_O3.bin")[:LAST_IND]
-rt_asm = read_results("data_1024/results_matrix_mul_function.s.bin")[:LAST_IND]
+rt_asm = read_results("data_1024/results_asm_matrix_mul.s.bin")[:LAST_IND]
 rt_asm_simd = read_results("data_1024/results_simd_matrix_mul.s.bin")[:LAST_IND]
 
 # Check that the lists are all the same length
