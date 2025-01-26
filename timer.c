@@ -70,7 +70,7 @@ double time_once(int* m1, int* m2, int* m3, int n) {
     #endif
     return 0;
 }
-#define MAX_N 512
+#define MAX_N 1024
 #define N_RESULTS (MAX_N / 4)
 
 int main(int argc, char* argv[]) {

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 import struct
 
-MAX_N = 512
+MAX_N = 1024
 N_RESULTS = MAX_N // 4
 def read_results(file_name):
 
@@ -15,10 +15,10 @@ def read_results(file_name):
     return list(struct.unpack(format_string, data))
 
 
-input_sizes = list(range(4, MAX_N + 1, 4))
-rt_gcc_o0 = read_results("results_gcc_O0.bin")
-rt_gcc_o3 = read_results("results_gcc_O3.bin")
-rt_asm = read_results("results_matrix_mul_function.s.bin")
+input_sizes = list(range(4, MAX_N - 3, 4)) # trim the last entry
+rt_gcc_o0 = read_results("data_1024/results_gcc_O0.bin")[:-1]
+rt_gcc_o3 = read_results("data_1024/results_gcc_O3.bin")[:-1]
+rt_asm = read_results("data_1024/results_matrix_mul_function.s.bin")[:-1]
 # rt_asm_simd = read_results("results_matrix_mul_function.s.bin")
 
 # Check that the lists are all the same length
