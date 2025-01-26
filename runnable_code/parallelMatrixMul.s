@@ -2,6 +2,7 @@ global main
 extern printf
 extern scanf
 extern malloc
+extern free
 
 
 %macro dot 2
@@ -22,7 +23,7 @@ extern malloc
         add r15, 4 ; n
         add %1, 16 ; 2 
         add %2, 16 ; 1
-        cmp r15, qword [n]
+        cmp r15, r8
 
         jne next_four
 
@@ -34,34 +35,33 @@ extern malloc
 
         movd r15d, xmm0
 %endmacro
-%macro transpose 2
-    mov rbx, %1
-    xor rcx, rcx ; j
-    xor r11, r11 ; k
-    xor r10, r10
-    mov rax, [n]
-    mul rax
-    mov r9, [n]
-    shl r9, 2
-    macrofor:
+%macro transpose 1
+    mov r10,%1
+    xor r9,r9
 
-        cmp r10, qword[n]
-        jne ifisnt
-        xor r10, r10
-        xor rcx , rcx
-        add rbx, 4
+    shl r8,2
+    mov rdx, r8
+    add rdx, %1
+    macrofor1:
 
+        mov r11,r10
+        mov rcx, r9
 
-        ifisnt:
-        mov r8, [rcx + rbx]
-        mov [%2 + 4 * r11], r8
+        macrofor2:
 
-        inc r11
-        inc r10
-        add rcx, r9
-        cmp r11, rax
-        jne macrofor
-    mov %1, %2
+            mov ebx, [r9+r11]
+            mov eax, [rcx+r10]
+            mov [r9+r11], eax
+            mov [rcx+r10], ebx
+            add rcx, r8
+            add r11,4
+            cmp r11,rdx
+            jne macrofor2
+
+        add r10,4
+        add r9, r8
+        cmp r10,rdx
+        jne macrofor1
 %endmacro
 
 
@@ -130,12 +130,10 @@ main:
     call malloc
     mov r14, rax
 
-    mov rax, [n]
-    mul rax
-    shl rax,  2
-    mov rdi, rax
-    call malloc
-    mov r15, rax
+    mov rdi, r12
+    mov rsi, r13
+    mov rdx, r14
+    mov rcx, [n]
 
     call matrix_mul
 
@@ -143,6 +141,8 @@ main:
     mul rax
     mov r15, rax
     mov r12, 0
+
+
 
 
 
@@ -169,11 +169,23 @@ main:
     ret
 
     matrix_mul:
+       
+ 
+       
 
-        transpose r13, r15
+        mov r12, rdi
+        mov r13, rsi
+        mov r14, rdx
+        mov r8, rcx
+
+
+        push r8
+        transpose r13
+        pop r8
+
  
         xor r9, r9
-        mov rcx, [n]
+        mov rcx, r8
         shl rcx, 2
         mov rdi, r12
         xor r10 , r10
@@ -191,13 +203,14 @@ main:
                 inc r11
                 inc r9
                 add rsi, rcx
-                cmp r11, qword[n]
+                cmp r11, r8
                 jne for_j
 
             inc r10
             add rdi, rcx
-            cmp r10, qword[n]
+            cmp r10, r8
             jne for_i
+
         ret
 
 section .data

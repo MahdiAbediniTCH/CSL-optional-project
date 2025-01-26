@@ -30,57 +30,49 @@ global matrix_mul
 
         movd r15d, xmm0
 %endmacro
-%macro transpose 2
-    mov rbx, %1
-    xor rcx, rcx ; j
-    xor r11, r11 ; k
-    xor r10, r10
-    mov rax, r8
-    mul rax
-    mov r9, r8
-    shl r9, 2
-    macrofor:
+%macro transpose 1
+    mov r10,%1
+    xor r9,r9
 
-        cmp r10, r8
-        jne ifisnt
-        xor r10, r10
-        xor rcx , rcx
-        add rbx, 4
+    shl r8,2
+    mov rdx, r8
+    add rdx, %1
+    macrofor1:
 
+        mov r11,r10
+        mov rcx, r9
 
-        ifisnt:
-        mov rdx, [rcx + rbx]
-        mov [%2 + 4 * r11], rdx
+        macrofor2:
 
-        inc r11
-        inc r10
-        add rcx, r9
-        cmp r11, rax
-        jne macrofor
-    mov %1, %2
+            mov ebx, [r9+r11]
+            mov eax, [rcx+r10]
+            mov [r9+r11], eax
+            mov [rcx+r10], ebx
+            add rcx, r8
+            add r11,4
+            cmp r11,rdx
+            jne macrofor2
+
+        add r10,4
+        add r9, r8
+        cmp r10,rdx
+        jne macrofor1
 %endmacro
 
 
 
 section .text
 
-matrix_mul:
+ matrix_mul:
 
     mov r12, rdi
     mov r13, rsi
     mov r14, rdx
-    mov r15, r8
-
     mov r8, rcx
 
-    push rcx
-
-
-    ; transpose r13, r15
-
-    
-    pop rcx
-
+    push r8
+    transpose r13
+    pop r8
 
 
     xor r9, r9
@@ -109,5 +101,5 @@ matrix_mul:
         add rdi, rcx
         cmp r10, r8
         jne for_i
-    ret
 
+    ret
