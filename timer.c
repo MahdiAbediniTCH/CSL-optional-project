@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #else
@@ -27,7 +28,7 @@ void print_matrix(int* m, int n) {
     {
         for (int j = 0; j < n; j++)
         {
-            printf("%d ", m[IND(i, j)]);
+            printf("%d\t", m[IND(i, j)]);
         }
         puts("");
     }
@@ -69,13 +70,23 @@ double time_once(int* m1, int* m2, int* m3, int n) {
     #endif
     return 0;
 }
-int main() {
-    double results[2048];
+#define MAX_N 512
+#define N_RESULTS (MAX_N / 4)
+
+int main(int argc, char* argv[]) {
+    char* filename = argv[1];
+    if (argc != 2) {
+        fprintf(stderr, "Need output file name.\n");
+        return 1;
+    }
+
+    double results[N_RESULTS];
     const int N_SAMPLES = 5;
     // loop for each size
-    for (int n = 4; n <= 2048; n += 4) {
+    for (int n = 4; n <= MAX_N; n += 4) {
         // average of 5 for accuracy
-        results[n] = 0;
+        int ind = n / 4 - 1;
+        results[ind] = 0;
 
         int* m1 = generate_matrix(n);
         int* m2 = generate_matrix(n);
@@ -83,47 +94,26 @@ int main() {
 
         for (int j = 0; j < N_SAMPLES; j++) {
             double t = time_once(m1, m2, m3, n);
-            results[n] += t;
+            results[ind] += t;
         }
-        results[n] /= N_SAMPLES;
-        printf("%d: %.9lf\n", n, results[n]);
-        if (n < 20)
-            print_matrix(m3, n);
+        results[ind] /= N_SAMPLES;
+        printf("%d: %.9lf\n", n, results[ind]);
+        // debug:        // if (n < 20)
+        //     print_matrix(m3, n);
         free(m1); free(m2); free(m3);
     }
-    
+    // store results binary:
+    FILE *file = fopen(filename, "wb");
+    if (!file) {
+        perror("Failed to open file");
+        return 1;
+    }
+    size_t elements_written = fwrite(results, sizeof(double), N_RESULTS, file);
+    if (elements_written != N_RESULTS) {
+        perror("Failed to write data to file");
+        fclose(file);
+        return 1;
+    }
+    fclose(file);
     
 }
-    
-// void time_general() {
-//     int m1[3][3] = {{1,1,1},{1,1,1},{1,1,1}};
-//     int m2[3][3] = {{1,2,3},{1,2,3},{1,2,3}};
-//     int m3[3][3];
-//     clock_t start, end;
-//     double cpu_time_used;
-
-//     start = clock();
-//     matrix_mul(m1, m2, m3, 3); // Call the function you want to time
-//     end = clock();
-
-//     cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
-//     printf("Function execution time: %.9lf seconds\n", cpu_time_used);
-
-// }
-// void time_windows() {
-//     int m1[3][3] = {{1,1,1},{1,1,1},{1,1,1}};
-//     int m2[3][3] = {{1,2,3},{1,2,3},{1,2,3}};
-//     int m3[3][3];
-//     LARGE_INTEGER frequency, start, end;
-//     double elapsed;
-
-//     QueryPerformanceFrequency(&frequency);
-//     QueryPerformanceCounter(&start);
-//     matrix_mul(m1, m2, m3, 3); // Call the function you want to time
-//     QueryPerformanceCounter(&end);
-
-//     elapsed = (double)(end.QuadPart - start.QuadPart) / frequency.QuadPart;
-
-//     printf("Function execution time: %.9lf seconds\n", elapsed);
-
-// }
