@@ -15,7 +15,7 @@ extern free
 
         movdqu xmm2, [%2]
 
-        pmaddwd xmm1, xmm2
+        pmulld xmm1, xmm2
 
         addps xmm0, xmm1
 
