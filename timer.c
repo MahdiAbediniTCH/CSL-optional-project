@@ -70,8 +70,11 @@ double time_once(int* m1, int* m2, int* m3, int n) {
     #endif
     return 0;
 }
+// MIN_N Must be a multiple of 4
+#define MIN_N 4
 #define MAX_N 1024
-#define N_RESULTS (MAX_N / 4)
+#define N_RESULTS ((MAX_N - MIN_N) / 4 + 1)
+#define N_SAMPLES 5
 
 int main(int argc, char* argv[]) {
     char* filename = argv[1];
@@ -81,9 +84,8 @@ int main(int argc, char* argv[]) {
     }
 
     double results[N_RESULTS];
-    const int N_SAMPLES = 5;
     // loop for each size
-    for (int n = 4; n <= MAX_N; n += 4) {
+    for (int n = MIN_N; n <= MAX_N; n += 4) {
         // average of 5 for accuracy
         int ind = n / 4 - 1;
         results[ind] = 0;
