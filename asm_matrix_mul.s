@@ -1,6 +1,14 @@
 global matrix_mul
 section .text
 matrix_mul:
+    push rbp
+    push rbx
+    push r12
+    push r13
+    push r14
+    push r15
+
+
     mov r15, rcx
     mov r12, rdi
     mov r13, rsi
@@ -46,4 +54,10 @@ matrix_mul:
         cmp rbx, qword 0
         jne for_i_in_range1
     pop r14
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop rbx
+    pop rbp
     ret
