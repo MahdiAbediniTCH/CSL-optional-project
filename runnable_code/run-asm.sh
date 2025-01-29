@@ -1,0 +1,1 @@
+nasm -g -F dwarf -f elf64 $1 -o asmobj.o && gcc -no-pie -g asmobj.o && ./a.out ; rm asmobj.o
