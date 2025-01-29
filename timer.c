@@ -86,7 +86,6 @@ int main(int argc, char* argv[]) {
     double results[N_RESULTS];
     // loop for each size
     for (int n = MIN_N; n <= MAX_N; n += 4) {
-        // average of 5 for accuracy
         int ind = n / 4 - 1;
         results[ind] = 0;
 
@@ -97,7 +96,9 @@ int main(int argc, char* argv[]) {
         for (int j = 0; j < N_SAMPLES; j++) {
             double t = time_once(m1, m2, m3, n);
             results[ind] += t;
+            // printf("%d: %.9lf\n", n, t);
         }
+        // average for accuracy
         results[ind] /= N_SAMPLES;
         printf("%d: %.9lf\n", n, results[ind]);
         // debug:        

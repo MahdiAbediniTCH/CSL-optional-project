@@ -36,7 +36,8 @@ plt.style.use('seaborn-v0_8-whitegrid')
 fig, ax = plt.subplots()
 
 # Define modern color palette
-colors = ['#002cb1', '#1884bb', '#2c44df', '#029c6e']
+colors = ['#002cb1', '#1884bb', '#7923b0', '#029c6e']
+
 
 # Plot the runtimes with distinct styles (without markers)
 ax.plot(input_sizes, rt_gcc_o0, color=colors[0], alpha=0.3, label='GCC -O0')
