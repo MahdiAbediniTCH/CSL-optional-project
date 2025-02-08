@@ -12,7 +12,7 @@ global matrix_mul
 
         pmulld xmm1, xmm2
 
-        addps xmm0, xmm1
+        paddd xmm0, xmm1
 
 
         add r15, 4 ; n
